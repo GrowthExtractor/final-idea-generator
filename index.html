@@ -114,7 +114,7 @@
                     errorMessage.classList.remove('hidden');
                 }
 
-            } catch (error)
+            } catch (error) {
                 console.error("Error generating ideas:", error);
                 errorMessage.textContent = `An error occurred: ${error.message || 'Please check your input and try again.'}`;
                 errorMessage.classList.remove('hidden');
