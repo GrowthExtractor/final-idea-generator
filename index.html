@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EDC Idea Generator</title>
+    <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts - Inter -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         body { font-family: "Inter", sans-serif; background-color: #000000; color: #ffffff; }
@@ -16,7 +18,7 @@
         textarea { width: 100%; padding: 0.75rem; border: 1px solid #d1d5db; border-radius: 0.5rem; font-size: 1rem; color: #000000 !important; resize: vertical; margin-bottom: 1.5rem; }
         textarea::placeholder { color: #888; }
         textarea:focus { outline: none; border-color: #f6a824; box-shadow: 0 0 0 2px rgba(246, 168, 36, 0.3); }
-        .generate-button { background-color: #f6a824; color: #000000; font-weight: bold; padding: 0.75rem 2rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(246, 168, 36, 0.1), 0 2px 4px -1px rgba(246, 168, 36, 0.06); transition: all 0.3s ease-in-out; transform: scale(1); }
+        .generate-button { display: inline-block; background-color: #f6a824; color: #000000; font-weight: bold; padding: 0.75rem 2rem; border-radius: 0.5rem; box-shadow: 0 4px 6px -1px rgba(246, 168, 36, 0.1), 0 2px 4px -1px rgba(246, 168, 36, 0.06); transition: all 0.3s ease-in-out; transform: scale(1); text-decoration: none; }
         .generate-button:hover { background-color: #e0971b; transform: scale(1.05); }
         .generate-button:focus { outline: none; box-shadow: 0 0 0 2px rgba(246, 168, 36, 0.5); }
         .generate-button:disabled { opacity: 0.6; cursor: not-allowed; transform: scale(1); box-shadow: none; }
@@ -42,6 +44,13 @@
         <div id="errorMessage" class="hidden mt-4 error-message">
             <p>An error occurred: Please try again or refine your input.</p>
         </div>
+
+        <!-- NEW: CTA Button Container - Initially Hidden -->
+        <div id="ctaButtonContainer" class="hidden mt-6">
+            <a href="https://growthextractor.kit.com/edclaunch" target="_blank" rel="noopener noreferrer" class="generate-button">
+                Want help? Click here
+            </a>
+        </div>
     </div>
 
     <script>
@@ -50,6 +59,8 @@
         const loadingIndicator = document.getElementById('loadingIndicator');
         const resultsOutput = document.getElementById('resultsOutput');
         const errorMessage = document.getElementById('errorMessage');
+        // NEW: Get the new button container
+        const ctaButtonContainer = document.getElementById('ctaButtonContainer');
 
         generateButton.addEventListener('click', async () => {
             const expertise = expertiseInput.value.trim();
@@ -62,6 +73,8 @@
             }
 
             resultsOutput.innerHTML = '';
+            // NEW: Hide the CTA button on new search
+            ctaButtonContainer.classList.add('hidden');
             errorMessage.classList.add('hidden');
             loadingIndicator.classList.remove('hidden');
             generateButton.disabled = true;
@@ -78,7 +91,7 @@
                     const errorDetail = await response.text();
                     throw new Error(`Server error: ${response.status} - ${errorDetail}`);
                 }
-
+                
                 const ideas = await response.json();
 
                 if (Array.isArray(ideas) && ideas.length > 0) {
@@ -94,12 +107,14 @@
                         }
                     });
                     resultsOutput.innerHTML = htmlContent;
+                    // NEW: Show the CTA button when results are displayed
+                    ctaButtonContainer.classList.remove('hidden');
                 } else {
                     errorMessage.textContent = "Could not parse ideas from the response. Please try again.";
                     errorMessage.classList.remove('hidden');
                 }
 
-            } catch (error) {
+            } catch (error)
                 console.error("Error generating ideas:", error);
                 errorMessage.textContent = `An error occurred: ${error.message || 'Please check your input and try again.'}`;
                 errorMessage.classList.remove('hidden');
